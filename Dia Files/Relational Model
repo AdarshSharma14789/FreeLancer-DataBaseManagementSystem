@@ -1,1 +1,55 @@
+Table Descriptions
 
+The schema is divided into several logical groups:
+
+1. Core Entities
+
+User_Registration: Stores basic information for any user who registers on the platform (e.g., name, email, password).
+
+Freelancer: Stores information specific to a freelancer, such as their hourly wage, bio, and experience level.
+
+Client: Stores information specific to a client, such as their payment authentication status and company name.
+
+2. Project Lifecycle
+
+Project: The central table containing details about a job posted by a client, including title, description, budget, and deadline.
+
+Proposal: A linking table where freelancers submit their proposals (bids) for a specific project.
+
+works_on: A table to track the status of a project that is actively being worked on by a freelancer after their proposal is accepted.
+
+3. Financial & Feedback
+
+Transactions: Records all financial transactions, linking the project, client, and freelancer.
+
+Reviews: Stores reviews and ratings left after a project is completed, linking the project, client, and freelancer.
+
+4. Supporting Data (Multi-Valued Attributes)
+
+freelancer_skills, freelancer_edu, freelancer_known_languages: These tables store multiple skills, education entries, and languages for a single freelancer.
+
+project_skills_required: Stores the list of skills required for a specific project.
+
+client_skills_expectation: Stores skills a client generally looks for (see design notes).
+
+5. Platform Features
+
+customer_support: A support ticket system for registered users.
+
+discussion_forum: A forum for users to post questions and comments.
+
+Design Notes & Potential Improvements
+
+This schema is a strong start. Here are a few observations and potential areas for improvement:
+
+User Role Management:
+
+Currently, User_Registration, Freelancer, and Client are three separate tables. Freelancer and Client don't seem to be linked to the User_Registration table.
+
+A more common pattern is to have the Freelancer and Client tables use the UserID from User_Registration as their Primary Key (and also a Foreign Key).
+
+This creates a single user identity (User_Registration) that can have one or more roles (a user could be both a Client and a Freelancer with the same account). This would also fix the issue where a Freelancer (who has no UserID) cannot use the customer_support or discussion_forum, which require a UserID.
+
+client_skills_expectation Table:
+
+This table links an expected_skill to a ClientID. This might be more useful if it linked to a ProjectID instead (e.g., project_skill_expectations), as a client's expectations might change from project to project.
